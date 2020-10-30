@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[css3 水位图波纹动效]]></title>
+    <url>%2F2020%2F07%2F20%2F%E6%B0%B4%E6%B3%A2%E7%BA%B9%E5%8A%A8%E6%95%88%2F</url>
+    <content type="text"><![CDATA[水波纹动效直接上代码 通过遮罩和动画实现水位图波纹特效 可以通过输入0-100的数字或者 拖动滑动条调节水位的高低 (通过修改wave-mask的top) 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101&lt;!DOCTYPE html&gt;&lt;html lang="en"&gt; &lt;head&gt; &lt;meta charset="UTF-8" /&gt; &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt; &lt;title&gt;Document&lt;/title&gt; &lt;style&gt; * &#123; box-sizing: border-box; padding: 0; margin: 0; &#125; .container &#123; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 3px solid #67c23a; background: #ffffff; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 7px 7px; overflow: hidden; &#125; .wave &#123; position: relative; width: 100px; height: 100px; background-image: linear-gradient(-180deg, #aaff80 13%, #67c23a 91%); border-radius: 50%; box-shadow: 1px 3px 3px 0 rgba(139, 139, 139, 0.822); &#125; .wave-mask &#123; position: absolute; width: 200px; height: 200px; top: 100%; left: 50%; border-radius: 39%; background-color: white; transform: translate(-50%, -100%) rotate(0); animation: toRotate 10s linear infinite; z-index: 20; &#125; @keyframes toRotate &#123; 50% &#123; transform: translate(-50%, -100%) rotate(180deg); &#125; 100% &#123; transform: translate(-50%, -100%) rotate(360deg); &#125; &#125; .tips &#123; position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; transform: translate(-25px, -25px); text-align: center; line-height: 50px; z-index: 30; &#125; &lt;/style&gt; &lt;/head&gt; &lt;body&gt; &lt;div class="container"&gt; &lt;div class="wave"&gt;&lt;/div&gt; &lt;div class="wave-mask"&gt;&lt;/div&gt; &lt;div class="tips"&gt;0%&lt;/div&gt; &lt;/div&gt; &lt;div style="display: flex; justify-content: center; align-items: center; margin-top: 200px;"&gt; &lt;input type="number" step="5"&gt; &lt;button style="margin-left: 20px;" id="btn"&gt;按钮&lt;/button&gt; &lt;input style="margin-left: 40px;" id="range" type="range" min="0" max="100" step="5" value="0" /&gt; &lt;/div&gt; &lt;script&gt; let btn = document.getElementById('btn') let mask = document.getElementsByClassName('wave-mask')[0] let ipt = document.getElementsByTagName('input')[0] let tips = document.getElementsByClassName('tips')[0] let range = document.getElementById('range') btn.onclick = function(e) &#123; let value = (100 - +ipt.value) mask.style.top = value + '%' tips.innerHTML = ipt.value + '%' &#125; range.onchange = function(e) &#123; let value = (100 - +e.target.value) mask.style.top = value + '%' tips.innerHTML = e.target.value + '%' &#125; &lt;/script&gt; &lt;/body&gt;&lt;/html&gt;]]></content>
+      <categories>
+        <category>css</category>
+      </categories>
+      <tags>
+        <tag>css</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[从零开始学习Vue源码 ——响应式基本原理]]></title>
+    <url>%2F2020%2F07%2F01%2F%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0Vue%E6%BA%90%E7%A0%81(%E4%BA%8C)%20%E2%80%94%E2%80%94%E5%93%8D%E5%BA%94%E5%BC%8F%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%2F</url>
+    <content type="text"><![CDATA[从零开始学习Vue源码 ——响应式基本原理这里实现一个简易版本的响应式系统来形象的理解数据是如何在初始化的时候被劫持，以及如何在修改时更新视图的。首先看下Vue2.x实现响应式系统最重要的方法Object.defineProperty, Vue2.x就是基于它实现的响应式 12345678/* obj: 目标对象 prop: 需要操作的目标对象的属性名 descriptor: 描述符 return value 传入对象*/Object.defineProperty(obj, prop, descriptor) 具体的属性以及使用方法可以参考MDN 下面贴一个简易版响应式的代码实现12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849// 更新视图时调用function cb (val) &#123; /* 渲染视图 */ console.log("视图更新啦～");&#125;// 对对象中某个属性进行数据劫持function defineReactive (obj, key, val) &#123; Object.defineProperty(obj, key, &#123; enumerable: true, /* 属性可枚举 */ configurable: true, /* 属性可被修改或删除 */ get: function reactiveGetter () &#123; return val; /* 实际上会依赖收集 */ &#125;, set: function reactiveSetter (newVal) &#123; if (newVal === val) return; cb(newVal); &#125; &#125;);&#125;// 遍历对象所有属性，进行数据劫持function observer (value) &#123; if (!value || (typeof value !== 'object')) &#123; return; &#125; Object.keys(value).forEach((key) =&gt; &#123; if(typeof value[key] === 'object') &#123; observer(value[key]) // 递归遍历深层次属性 &#125; defineReactive(value, key, value[key]); &#125;);&#125;class Vue &#123; constructor(options) &#123; this._data = option.data observer(this._data); &#125;&#125;const vm = new Vue(&#123; data: &#123; name: &#123;firstName: 'z', lastName: 'zz'&#125; &#125;&#125;)vm._data.name.firstName = 'cc' // 此时会打印 视图更新啦～ 下面我们一步步解析以上简易版响应式系统原理 首先我们要实现一个对对象属性进行数据劫持，跟踪属性更新的函数 defineReactive ， 该函数使用了 Object.defineProperty 进行数据劫持, 被设置的属性会在读取时触发 getter, 会在设置时触发 setter 执行里面更新视图的函数 cb 打印出 视图更新啦～ 只有一个defineReactive还不够， 我们还需要实现一个 observer 来对对象所有属性遍历、递归进行绑定, 这样对象上所有属性修改时都会触发getter 、 setter。 最后我们构建一个Vue 的class类， 在构造函数中初始化data，并进行[响应式] 化 当实例化Vue后，我们修改_data上的值就会触发setter 更新视图 总结响应式系统最重要的就是数据劫持部分，当然这里只是一个简单的实现，像数组对象等都没处理，不过能通过这个demo了解相应式的基本原理。]]></content>
+      <categories>
+        <category>javascript</category>
+        <category>vue</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[从零开始学习Vue源码 —— 概览]]></title>
+    <url>%2F2020%2F07%2F01%2F%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0Vue%E6%BA%90%E7%A0%81(%E4%B8%80)%20%E2%80%94%E2%80%94%20%E6%A6%82%E8%A7%88%2F</url>
+    <content type="text"><![CDATA[从零开始学习Vue源码 —— 概览先上一张图 以上流程包括了从： 初始化 —— 挂载 —— 解析模版 —— 生成渲染函数 —— render function转换为VNode节点最终形成Virtual Dom Tree —— virtual dom tree转化为真实Dom节点从而渲染视图 响应式更新包括了: 在init时进行了Object.defineProperty 的绑定 —— render function渲染读取值，触发getter函数 —— 进行依赖收集 —— 修改对象值触发setter函数 —— 通知[依赖收集]中Dep的每个 watcher 值变化了，需要更新视图 —— watcher调用 update来更新视图 —— 将新、旧VNode传入patch进行diff比较，只修改比较得出的差异的部分Dom init在 new Vue() 之后， 会进行一系列的初始化操作，包括初始化 生命周期 、 事件、props 、 methods 、 data 、 computed 、 watch 等。 最重要的是进行 Object.defineProperty 的绑定，用于实现 [响应式] 和 [依赖收集] $mount在初始化之后就会进行组件的挂载 compile如果是运行时会进行template模版的编译， 包括 ： parse —— 使用正则解析模版中的指令、class、style等 ， 形成AST (抽象语法树) optimize —— 标记 static 静态节点，用于后面update 时 patch 执行diff算法对静态节点跳过，从而优化性能 generate —— 将AST转换为 render function， 包括 render字符串 和 staticRenderFns字符串 经过以上步骤之后，就会生产用于渲染VNode的 render function Virtual DOMRender function 转换为Vnode节点，最终形成 virtual Dom Tree ，最后虚拟Dom渲染得到真实Dom 响应式render function被渲染时会读取 Init时绑定的值，就会触发 getter函数进行 [依赖收集] [依赖收集] 是为了将观察者watcher对象存放到订阅者Dep的subs中 在修改对象值时会触发setter函数，通知之前依赖收集dep中的每个watcher值发生改变了，紧接着，watcher就会调用 update来更新视图 关于setter为什么要通知dep中的每个watch，这里引用一段网友的解释: 通知所有的watcher是指对应的dep保存的所有watcher。进行数据劫持的时候，循环遍历data中所有的属性，一个属性就会创建一个唯一的dep,当初始化解析编译界面的时候，一个指令/表达式就是一个watcher,那么解析指令/表达式的值的时候就去读data中的属性，触发getter，再触发添加dep添加订阅（将watcher添加到dep.subs中），当修改对应的属性的时候，触发setter，那么就再去触发这个dep保存的所有watcher 总结以上大概梳理呢Vue整个运行机制，后续会针对每个大板块，小功能进行更细致化的分析。]]></content>
+      <categories>
+        <category>javascript</category>
+        <category>vue</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[react hooks知识点]]></title>
+    <url>%2F2020%2F07%2F01%2Freact%20%20%E7%9F%A5%E8%AF%86%E7%82%B9%2F</url>
+    <content type="text"><![CDATA[react 知识点(hooks, class)1. usecallback 缓存函数，依赖项变化后再重新生成. useCallback Hook 允许你在重新渲染之间保持对相同的回调引用以使得 shouldComponentUpdate 继续工作 当缓存的函数依赖项频繁变动的话，可以采用useRef的形式，在 xxxRef.current 上把所依赖的变量写入xxxref， usecallback依赖 xxxRef， 因为xxxref只会创建一次，且xxxref.current始终是最新的，所以可以解决依赖项频繁变更的问题并且可以完成函数的缓存。 2.memo 子组件 props不变的情况下，父组件重新渲染子组件并不会重新渲染 3. useMemo 缓存值，当依赖项变化时，才会重新计算生成最新值 4.PureComponent 同memo， 通过class继承的方式实现子组件不因为父组件更新而进行不必要的渲染。，只依赖props 为什么不每个组件都用memo或者pureComponent包装呢？​ react决定组件是否更新是根据 前后props 来比较的，但比较也仅仅只是潜比较 ， 只能比较值的不同，如果是引用，比如对象、数组等就无能为力老。 所以，如果props是引用类型，父组件每次更新，传递的引用对象都是新生成的，地址空间已经变了，所以子组件经过潜比较判断前后的prop是不相等的，就会造成子组件重新渲染。 同样， 传递的箭头函数(匿名函数)也会造成相同的后果。 那我们如何规避这种情况呢？ 拆分props传入的应用对象，拆分为单个的值 函数传入唯一声明的函数引用。 比如在class中传入 xxxxfn.bind(this)的函数 控制更新。 使用class的 shouldComponentUpdate(prevProps, prevState) 或者memo的 第二个参数来对前后props进行更深层次的比较，从而控制更新。 5. useReduce useReducer Hook 减少了对深层传递回调的依赖， 6. useContext 用于解决组件深层次嵌套的通信问题]]></content>
+      <categories>
+        <category>javascript</category>
+        <category>react</category>
+      </categories>
+      <tags>
+        <tag>react</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[不使用 + 、-求两个数的和 （含符号）]]></title>
+    <url>%2F2020%2F06%2F19%2F%E4%B8%8D%E4%BD%BF%E7%94%A8%20%2B%20%E3%80%81-%E6%B1%82%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%9A%84%E5%92%8C%20%EF%BC%88%E5%90%AB%E7%AC%A6%E5%8F%B7%EF%BC%89%2F</url>
+    <content type="text"><![CDATA[不使用 + 、-求两个数的和 （含符号）首先想到用位运算符来处理 ^ 异或 可以理解为不进位的加法 如: 0010 ^ 0101 = 0111 0 + 0 = 0 | 1+1 = 0 | 1 + 0 = 1 &amp; 按位与 &lt;&lt; 按位左移 分析： 既然 ^ 异或可以得到不进位得值，那么再通过 &amp; 按位与取得需要进位的位， 再 &lt;&lt; 按位左移进位就可以取得进位的值 将 没进位的和 ^ 进位 接着再进行以上的操作，没进位的和 &amp; 进位 直到 &amp; 的值为0时就代表没有进位了， 就返回 没进位的和 ^ 进位 的值 eg: 9 + 7 = 1001 + 0111 s1 = 1001 ^ 0111 = 1110 | 1001 &amp; 0111 = 0001 | j1 = 0001 &lt;&lt; 1 = 0010 j2 = s1 &amp; j1 = 1110 &amp; 0010 = 0010 &lt;&lt; 1 = 0100 (还有进位，继续执行上述步骤) s2 = s1 ^ j1 = 1110 ^ 0010 = 1100 J3 = j2 &amp; s2 = 0100 &amp; 1100 = 0100 &lt;&lt; 1 = 1000 s3 = j2 ^ s2 = 0100 ^ 1100 = 1000 J4 = j3 &amp; s3 = 1000 &amp; 1000 = 1000 &lt;&lt; 1 = 10000 s4 = j3 ^ s3 = 1000 ^ 1000 = 0000 j5 = j4 &amp; s4 = 1 000 &amp; 0000 = 0 0000 s5 = j4 ^ s4 = 1 0000 ^ 0 0000 = 1 0000 = 16 j s 实现123456789101112let add = function(a,b) &#123; let sum = a ^ b; let carry = (a&amp;b) &lt;&lt; 1; if(a&amp;b) &#123; return add(sum, carry); &#125; else &#123; return sum; &#125;&#125;add(10, 6) // 16add(-2, 8) // 6 python 实现1234567891011#!/usr/bin/python3def add(a, b): if(b == 0): return a sum = a ^ b carry = (a &amp; b) &lt;&lt; 1 return add(sum, carry) nums = add(2,99) // 101]]></content>
+      <categories>
+        <category>javascript</category>
+      </categories>
+      <tags>
+        <tag>algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[前端知识点梳理 --part one]]></title>
+    <url>%2F2020%2F06%2F10%2F%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E7%82%B9%E6%A2%B3%E7%90%86%20%20%20--part%20one%2F</url>
+    <content type="text"><![CDATA[前端知识点梳理 –part one基础部分1. Html 语义化的好处 ? 使html的结构更清晰，更直观，更易于seo 2. 清除浮动的方法有哪些 ？ 定义一个空标签再浮动元素之后。 然后给其 clear: both 定义伪元素来清除浮动 使用overflow:auto（空标签元素清除浮动而不得不增加无意代码的弊端,,使用zoom:1用于兼容IE）。 3. img标签 alt 和 title的异同 alt 是当图片显示不出来时显示的文字。 title 是hover时显示的提示文字。 (描述性文字， 一直都有) 总结： alt是当正常图片显示不出来时的替代内容。title是一直存在的描述性内容。 4. 行内元素有哪些？块级元素有哪些？ 空(void)元素有那些? 行内元素: i、strong、b、bm、a、span、input、select、img 块级元素: div、h(x)、p、ul、ol、li 空元素 br 5. html5有哪些新特性、移除了那些元素？如何处理HTML5新标签的浏览器兼容问题？如何区分 HTML 和 HTML5？ 新增的元素 语义化元素: article、section、header、nav、footer 音视频元素：video、audio 画布元素： canvas 表单控件： time、email、date、calendar…… 缓存 local storage、session storage 新技术： webworker(为 JavaScript 创造多线程环境)、geolacation、websocket 移除的元素 frame、frameset，noframes 纯表现的元素： basefont，big，center，font, s，strike，tt，u 如何支持新的标签 直接使用成熟的框架、使用最多的是html5shim框架 如何区分是html5 docType/新增的元素 6. 介绍一下CSS的盒子模型？ IE盒模型 ｜ 标准盒模型 IE盒模型的计算方式是 border + padding + content = 宽 ｜ 高 标准盒模型计算方式是 content = 宽 ｜ 高 7. css3新增属性? Border- 边框(shadow、img、radius) Background-背景 (image、size、origin(相对不同盒模型)、clip(相对不同盒模型裁剪)) — (border-box、content-box、padding-box) gradients 渐变。 线性渐变 – Linear Gradients 。 径向渐变 – Radial Gradients 文字效果 (text-shadow: 文字阴影、box-shadow: 盒子阴影 、text-overflow: 文字溢出处理、 word-wrap: 文字换行、 word-break： 拆分换行,非中日韩文本) 字体: @font-face 2D、3D转换 . 2D : translate(移动)、 rotate(旋转)、 scale(缩放)、 matrix(包含旋转，缩放，移动（平移）和倾斜功能。 3D: 2D属性的3D体现 过渡: transition 动画 @keyframes 规则 。 animation ： 使创建的规则生效 多列布局 column-xxx 弹性布局 flex 媒体查询 @media xxx and (max-with: xxxpx) {}]]></content>
+      <categories>
+        <category>javascript</category>
+      </categories>
+      <tags>
+        <tag>summary</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[二进制流转图片]]></title>
+    <url>%2F2020%2F04%2F07%2Fblob2pic%2F</url>
+    <content type="text"><![CDATA[二进制流(ArrayBuffer)转为图片 首先通过ajax或者ws获取到传来的二进制流数据 responseType 需要设置为arraybuffer。 然后我们拿到所需的二进制数据， 通过console打印发现是一个ArrayBuffer，接着我们对其进行如下处理，转为base64: 1234567891011121314151617function arrayBufferToBase64(buffer) &#123; var binary = ''; var bytes = new Uint8Array(buffer); var len = bytes.byteLength; for (var i = 0; i &lt; len; i++) &#123; binary += String.fromCharCode(bytes[i]); &#125; return window.btoa(binary);&#125; 显示图片。 接着我们把收到的二进制数据通过上面的函数转为url: 1let url= arrayBufferToBase64(response); ​ 然后将生成的url放到img标签的src属性中： 1document.getElementById('img').src='data:image/jpeg;base64,'+url; ​ 大功告成～]]></content>
+      <categories>
+        <category>javascript</category>
+      </categories>
+      <tags>
+        <tag>blob</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Nuxt i18n国际化]]></title>
     <url>%2F2019%2F03%2F31%2FNuxt.js%20%20i18n%E5%9B%BD%E9%99%85%E5%8C%96%2F</url>
     <content type="text"><![CDATA[Nuxt.js集成国际化前言​ 公司官网需求要加上国际化， 之前官网使用的是vue的 nuxt框架，然后generate生成的静态页面，看了一下，nuxt官方有集成i18n的示例就跟着弄了一下，期间也踩了一些坑。 准备工作安装​ npm install vue-i18n –save 在nuxt.config.js 中配置​ 12345plugins: ['~/plugins/i18n.js'],router: &#123; middleware: ['i18n']&#125; 在plugins文件夹下新建i18n.js​ 12345678910111213141516171819202122232425import Vue from 'vue'import VueI18n from 'vue-i18n'Vue.use(VueI18n)export default (&#123; app, store &#125;) =&gt; &#123; // Set i18n instance on app // This way we can use it in middleware and pages asyncData/fetch app.i18n = new VueI18n(&#123; locale: store.state.locale, fallbackLocale: 'cn', messages: &#123; en: require('~/locales/en.json'), cn: require('~/locales/cn.json') &#125; &#125;) app.i18n.path = link =&gt; &#123; if (app.i18n.locale === app.i18n.fallbackLocale) &#123; return `/$&#123;link&#125;` &#125; return `/$&#123;app.i18n.locale&#125;/$&#123;link&#125;` &#125;&#125; 在middleware文件夹下新建 i18n.js​ 12345678910111213141516171819202122export default function (&#123; isHMR, app, store, route, params, error, redirect &#125;) &#123; const defaultLocale = app.i18n.fallbackLocale // If middleware is called from hot module replacement, ignore it if (isHMR) return // Get locale from params // const locale = params.lang || defaultLocale const locale = params.lang || defaultLocale if (store.state.locales.indexOf(locale) === -1) &#123; return error(&#123; message: 'This page could not be found.', statusCode: 404 &#125;) &#125; // Set locale store.commit('SET_LANG', locale) app.i18n.locale = store.state.locale // If route is /&lt;defaultLocale&gt;/... -&gt; redirect to /... if (locale === defaultLocale &amp;&amp; route.fullPath.indexOf('/' + defaultLocale) === 0) &#123; const toReplace = '^/' + defaultLocale + (route.fullPath.indexOf('/' + defaultLocale + '/') === 0 ? '/' : '') const re = new RegExp(toReplace) return redirect( route.fullPath.replace(re, '/') ) &#125;&#125; 创建本地语言库​ 在根目录下新建文件夹locales， 然后在文件夹下添加你要翻译的语言的json文件 。 在store文件夹下新建index.js​ 123456789101112export const state = () =&gt; (&#123; locales: ['en', 'cn'], locale: 'cn'&#125;)export const mutations = &#123; SET_LANG(state, locale) &#123; if (state.locales.indexOf(locale) !== -1) &#123; state.locale = locale &#125; &#125;&#125; 踩坑……​ 好了，照着官方把该加的都加了，这下就能实现国际化的切换了吧。 然后参考了几篇文章， 通过 this.$i18n.locale = Langname 或是 this.$store.commit(‘SET_LANG’, lang) 切换语言。 结果要不就是404， 要不就是一个页面切换了，然后换个页面，也就是切换了路由又变回原来的语言了。。。 ​ 结果找了好久发现是路由的问题，主要是middleware中的这一段代码: 1234567const locale = params.lang || defaultLocale if (store.state.locales.indexOf(locale) === -1) &#123; return error(&#123; message: 'This page could not be found.', statusCode: 404 &#125;) &#125; // Set locale store.commit('SET_LANG', locale) app.i18n.locale = store.state.locale 每次我们切换页面的时候都会调用这个中间件，然后会去判断路由中的params 如果lang参数有值就将语言设置为对应的值。 ​ 比如我的地址是 “http://localhost/zn/&quot; 那么中间件就会将当前的lang设置为zn 如果就是”http://localhost/&quot; 就会设置为默认的值. ​ 所以之前我们手动设置了store中的值，切换了路由就会变回原样是因为每次中间件都会把locale设置成默认值(因为我们路由中没有带参数)。 ​ 可是当我们路由带上参数后切出现找不到页面的情况，这是因为当前路径下，比如 “http://localhost/zn/&quot; 找不到我们的页面。 这是我们就要用到nuxt提供给我们的一个 动态路由的功能。 ​ 动态路由根据官方可如下配置，因为nuxt是根据page下目录生成路由，可如下组织目录: _lang 就是动态路由下的参数项，这样不管是带不带参数都能找到页面了。]]></content>
@@ -22,18 +102,6 @@
       <tags>
         <tag>前端</tag>
         <tag>css技巧</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[2018 Review]]></title>
-    <url>%2F2019%2F02%2F11%2F2018-Review%2F</url>
-    <content type="text"><![CDATA[2018 ——reborn 年前就打算做一个2018年的年度总结，但一直不知道写些什么。。。2018年对我来说算是大学乃至整个学生生涯最重要的一年吧。无论是学习、竞赛、情感、人生规划…… 2～3月 这个时间段是放寒假期间，基本一天都宅在家。 自从大二下进入实验室已经差不多大半年了，除开第一次电赛的惨败，大三上多多少少参加了一些学校、学院的竞赛，也或多或少拿了一些奖，但总感觉就是小打小闹。假期无聊试着学了下python爬虫，说白了也就是照着视频敲，也不知道学了有啥用。 当时的状态就是想着要去学新东西，但不知道学啥，学了之后能干啥。。 之后偶然去基友家接触了前端开发，当时真被前端吸引了，一两行代码就能实现这么炫酷的页面效果，要是换在单片机上显示普通点的页面都够呛。 而且正好我们后续做的页面需要懂前端这一块， 所以差不多开学后，我就开始了我的前端爬坑之旅。 3～6月 虽然专业课从没学过前端相关的内容， 实验室也没接触过，周围人也基本都不了解这一块。 但当时可能就是痴迷这一块，一天都在网上看视频学习，有时还逃课在寝室看前端的东西。想想当时也很拼了，不确定以后是否从事这个行业，只是当时痴迷于其中。 但当时的压力确实也挺大的，一是放下当时搞的还不错的嵌入式，二是当大家都在主要搞嵌入式时，就自己一个人，‘一枝独秀’瞎琢磨前端， 想想还颇有一副虽千万人吾往矣的壮阔。 其实前期学习的压力到没多大，转折应该是5月初基友介绍一个微信公众号的项目，当时想着学了还是有一阵子了，就先做个练练手吧。。 结果接手之后，一脸懵逼，公众号开发用啥开发呀？问基友，说用node.js ， 好吧，又是一个没听过的东西，不过是js的语法，快速上手应该不成问题。 然后， 就开始了黑暗的一周。。。。 早起晚睡，基本天天都是在看这些。。 估摸着那一周起嘛瘦了几斤…… 然后终于熬出来了之后，回过头才发现。。 这tm好像是偏后端那一块的吧。。。 反正那周学会了搭服务器，配置nginx，写node.js 。。。 跟之前看的前端页面除了js语法，其他都没太大关系。。。 不过这也算我的第一次实战吧，虽然好像有点偏。。。 差不多到了5月中旬， 我们团队都把全部精力投入在后面的智能互联比赛上了，前端的学习也暂时告一段落，又回到了熟悉的单片机开发中。 可能是之前一直在准备，要用到的模块之前也大多都调试好了，所以后面个多月还算比较顺利，也没熬几个夜哈哈。这次算是加入实验室来花的时间最多，投入精力最多的一次比赛了，那段时间就差住在实验室了。 不过也是因为基本全部精力投入在那上面，忽略了很多很重要的东西，也放弃了很多很重要的东西…… 不过还好有一起努力的同伴，还有鼓励我，在崩溃边缘拉我一把的人。 7～9月 七月初差不多我们的作品就做好了，当时做完后其实还挺激动的，从下位机到公众号到H5网页，整个作品软件部分都是自己一个人完成的，当然团队也非常的给力，整个作品做出来看着还算不错的。第一次去成都西南赛区决赛，过程也是很曲折了，从出发前到比赛完之后一直都挺跌宕起伏的，不过好在最后拿到了赛区第一，获得了参加全国赛的资格。 在金康汽车设计院实习期间请假去了南京参加全国赛，这也是第一次去这么远的地方，参加比较重要的比赛吧。由于吸取了西南赛区的经验，我们没有把全部精力投入在技术以及作品的调试上，更多的是放在了作品的定位以及团队答辩的配合上。也许是西南赛区的一些波折吧，让我深刻认识到一个成熟且受欢迎的产品，技术只是占其中一部分，甚至只是一小部分。更多的是对这个产品的定位以及包装等一系列无关技术但起着至关重要作用的东西。到南京时正好刮大风，我们也算正好乘着这阵风，在大学生涯算是最后是一场竞赛中获得了全国一等奖。 也算意外中的意料之中吧， 算上准备时间，为期2个多月的‘旅途’终于画上了句号。 以前看着那些参加竞赛获奖，全国各地到处比赛，能和自己团队的一起为某个目标奋斗的人，就觉得好厉害，这样的大学生活和窝在寝室玩游戏简直不能比。大一大二基本是寝室——教学楼 两点一线的我，曾经只想着安稳毕业，随便找个工作，过上大部分人都在过的生活，乖乖的当好韭菜就好。可经历过耗上全部精力投身自己的热爱，和一群小伙伴一起为一个目标聚在一起。哭过、笑过、迷茫过、也曾想过放弃，可那一个个熬过的夜，那一次次调试通过后的畅快，那不坚持到最后不服输的偏执，正是牵引我们在黑夜中徐徐前行的微光吧。 结束金康这边的实习后，进了现在的公司。 许是经过了这大半年的折腾，已经完全摒弃了以前安于现状，按部就班的生活方式。现在更想做更多自己想做的事，看更广阔的风景，见更多有趣的人，想更多以前不敢想的事。 能和以前实验室的伙伴们，在创业公司继续折腾，甚至能有机会尝试前端的工作，对我来说，都是一次不可多得的机会。 ～now 开学后大半时间在公司，做课设期间也在学校呆了挺久。可能是还没毕业，上班久了难免会想回学校和同学、室友们度过这最后的大学时光…… 回学校的两个多月，格外珍惜这有限的时光，每天能一起上下课，能一起谈天说地，在最后的一周多还能和一群有趣的小姐姐一起做毕设，虽然很累吧，但真的格外珍惜这大家聚在一起的温馨，仿佛回到当初实验室一群小伙伴整天待在一起的时候…… 我们在拥有的时候总是不以为然，却又在即将失去的时候慌了阵脚。 后面一段时间，可能面对一些事，一些人陷入了比较长的烦恼期。会去仔细想曾经不曾想的未来的规划，以及自己想成为什么样的人。。。 但也正是因为这个契机，也让我开始学会慢慢规划以后的生活，尝试去搞明白做一些事的意义。 summary 2018给我最大的感受就是改变，学习、生活、观念、认知上的改变，同时也是进步最大的一年。从大一大二的懵懵懂懂，慢慢找到了大学的方向，并投入全部热爱到里面，还取得了不错的成绩。 其实这些都是外在的，无非就是多了几个奖，多了几个标签，最重要的还是内在的成长。不管是去外面参加比赛，还是实习工作，让我认识最深的就是 ‘眼界决定高度’ 。 我们所经历的每件事， 见到的每个人都会在成长路上留下或深或浅的印记，珍惜投入热情做事时的时光，感谢帮助你成长的每个人，不管当时是让你开心还是难过。 ​ 最后引用龙族里面的一句话： “其实每个人的人生都是一部公路片，别在乎跑去哪里，关键是一直在跑， 反正最后的目的地一定是座墓碑。” 是啊， 反正目的地都一样。 我们唯一能决定的就是，在沿途我们能见到什么样的风景，遇到什么样的同行的人。 旅途还长，旅途才刚开始。 2018， 是那么的不舍 2019， 是那么的期待]]></content>
-      <categories>
-        <category>annual review</category>
-      </categories>
-      <tags>
-        <tag>年度总结</tag>
-        <tag>2018</tag>
       </tags>
   </entry>
 </search>
