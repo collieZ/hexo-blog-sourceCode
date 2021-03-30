@@ -90,18 +90,18 @@
 
 
 
-<meta name="description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125; 变量选择器1234567891011@my-selector: swipper;.@&amp;#123;my-selector&amp;#125;-list &amp;#123;  color: red;&amp;#125;// 转换成.swipper-list &amp;#123;  color: red;&amp;#125">
+<meta name="description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125;">
 <meta name="keywords" content="css">
 <meta property="og:type" content="article">
 <meta property="og:title" content="less 使用总结">
 <meta property="og:url" content="http://yoursite.com/2020/11/04/less笔记/index.html">
 <meta property="og:site_name" content="深夜杂记">
-<meta property="og:description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125; 变量选择器1234567891011@my-selector: swipper;.@&amp;#123;my-selector&amp;#125;-list &amp;#123;  color: red;&amp;#125;// 转换成.swipper-list &amp;#123;  color: red;&amp;#125">
+<meta property="og:description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-11-04T15:12:19.308Z">
+<meta property="og:updated_time" content="2021-03-30T06:57:09.143Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="less 使用总结">
-<meta name="twitter:description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125; 变量选择器1234567891011@my-selector: swipper;.@&amp;#123;my-selector&amp;#125;-list &amp;#123;  color: red;&amp;#125;// 转换成.swipper-list &amp;#123;  color: red;&amp;#125">
+<meta name="twitter:description" content="less  笔记📒变量1234@color: red;.a &amp;#123;  color: @color;&amp;#125;">
 
 
 
@@ -181,7 +181,7 @@
       </a>
     </div>
       
-        <h1 class="site-subtitle" itemprop="description">凡心所向, 素履以往</h1>
+        <h1 class="site-subtitle" itemprop="description">everything will be ok</h1>
       
   </div>
 
@@ -318,7 +318,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/04/less笔记/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="">
+      <meta itemprop="name" content="collieZhou">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -415,6 +415,7 @@
 
       
         <h1 id="less-笔记📒"><a href="#less-笔记📒" class="headerlink" title="less  笔记📒"></a>less  笔记📒</h1><h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@color:</span> red;</span><br><span class="line"><span class="selector-class">.a</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@color</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="变量选择器"><a href="#变量选择器" class="headerlink" title="变量选择器"></a>变量选择器</h2><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@my-selector:</span> swipper;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.@&#123;my-selector&#125;</span><span class="selector-tag">-list</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换成</span></span><br><span class="line"><span class="selector-class">.swipper-list</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h2><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@my-propertity:</span> width;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.block</span> &#123;</span><br><span class="line">  <span class="attribute">@&#123;my-propertity&#125;</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换成</span></span><br><span class="line"><span class="selector-class">.block</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>用变量代替或<strong>拼接</strong>样式属性名</p>
@@ -535,7 +536,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-author-name" itemprop="name">collieZhou</p>
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -546,7 +547,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -557,7 +558,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -568,7 +569,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -598,12 +599,16 @@
             <div class="links-of-blogroll motion-element links-of-blogroll-block">
               <div class="links-of-blogroll-title">
                 <i class="fa  fa-fw fa-link"></i>
-                神秘链接
+                友链
               </div>
               <ul class="links-of-blogroll-list">
                 
                   <li class="links-of-blogroll-item">
-                    <a href="http://blog.helloyzy.cn/" title="芒僧" target="_blank">芒僧</a>
+                    <a href="https://shunichio.github.io/blog" title="shunichi" target="_blank">shunichi</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.tcmiao.com/" title="tcmiao" target="_blank">tcmiao</a>
                   </li>
                 
               </ul>
@@ -652,11 +657,11 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i> 
   </span>
-  <span class="author" itemprop="copyrightHolder"></span>
+  <span class="author" itemprop="copyrightHolder">collieZhou</span>
 
   
 </div>
