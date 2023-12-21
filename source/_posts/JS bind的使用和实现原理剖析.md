@@ -31,7 +31,7 @@ bindFn('arg2') // args==> (2) ["arg1", "arg2"] name==> jeff
 2. 通过bind将参数传递给函数`fn`
 3. 返回一个新函数
 
-<!-- more -->
+
 
 *通过 `fn.bind(obj, 'arg1')	` 将函数`fn`的this指向obj， 同时将 ‘arg1’ 作为 bind 的第二个参数传递给函数 `fn`， 并返回新函数 `bindFn`   。 此时调用 `bindFn`  并传入参数作为 fn 的第二个参数，执行结果依次是打印 arg1 、 arg2、jeff*
 
