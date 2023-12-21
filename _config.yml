@@ -4,10 +4,10 @@
 
 # Site
 title: 深夜杂记
-subtitle: 凡心所向, 素履以往
+subtitle: everything will be ok
 description: 
 keywords: blog
-author: 
+author: collieZhou
 language:
 timezone:
 
@@ -79,7 +79,8 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/hentaizhou/hentaizhou.github.io
+  repo: git@github.com:collieZ/collieZ.github.io.git
+  # repo: https://github.com/hentaizhou/hentaizhou.github.io
   branch: master
 
 search:

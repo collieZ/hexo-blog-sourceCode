@@ -35,7 +35,7 @@ favicon:
   #ms_browserconfig: /images/browserconfig.xml
 
 # Set default keywords (Use a comma to separate)
-keywords: "zhiweizhou,blog,Hexo,NexT"
+keywords: "zhiweizhou,blog,collieZhou,Hexo,NexT"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -145,11 +145,13 @@ social_icons:
 
 # Blog rolls
 links_icon: link
-links_title: 神秘链接
+links_title: 友链
 links_layout: block
 #links_layout: inline
 links:
-  芒僧: http://blog.helloyzy.cn/
+  tcmiao: https://www.tcmiao.com/
+  gisExample: http://elpsycongroo7.cn:99/#/
+
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
@@ -271,7 +273,7 @@ android_chrome_color: "#222"
 #   image: url-of-image   - Images's url
 custom_logo:
   enabled: false
-  image: 
+  image:
 
 # Code Highlight theme
 # Available value:
@@ -781,11 +783,11 @@ vendors:
 
   # three_waves
   # https://github.com/jjandxa/three_waves
-  three_waves: 
+  three_waves:
 
   # three_waves
   # https://github.com/jjandxa/canvas_lines
-  canvas_lines: 
+  canvas_lines:
 
   # three_waves
   # https://github.com/jjandxa/canvas_sphere
