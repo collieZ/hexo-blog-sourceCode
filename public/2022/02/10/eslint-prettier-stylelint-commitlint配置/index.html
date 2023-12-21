@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="collieZhou">
+
+
+  <meta name="subtitle" content="run">
+
+
+
+  <meta name="keywords" content="blog">
+
+
+<title>eslint,prettier,stylelint,commitlint配置 | 深夜杂记</title>
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="深夜杂记" />
+          深夜杂记
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        eslint,prettier,stylelint,commitlint配置
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+          <a class="hidden sm:flex" href="/categories">Categories</a>
+        
+          <a class="hidden sm:flex" href="/tags">Tags</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/collieZ">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/categories" class="flex h-12 sm:h-auto items-center">Categories</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/tags" class="flex h-12 sm:h-auto items-center">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <!-- css -->
+
+<link rel="stylesheet" href="/lib/fancybox/fancybox.min.css">
+
+
+<link rel="stylesheet" href="/lib/tocbot/tocbot.min.css">
+
+<!-- toc -->
+
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
+<section class="px-6 max-w-prose mx-auto md:px-0">
+  <!-- header -->
+  <header class="overflow-hidden pt-6 pb-6 md:pt-12">
+    <div class="pt-4 md:pt-6">
+      <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
+        eslint,prettier,stylelint,commitlint配置
+      </h1>
+      <div>
+        <section class="flex items-center gap-3 text-sm">
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
+            <time>2022-02-11</time>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
+            <span>9 min</span>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
+            <span>1.7k words</span>
+          </span>
+          
+        </section>
+      </div>
+    </div>
+  </header>
+  <!-- content -->
+  <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
+    <h1 id="代码、项目规范，配置-eslint、prettier、stylelint、commitlint"><a href="#代码、项目规范，配置-eslint、prettier、stylelint、commitlint" class="headerlink" title="代码、项目规范，配置 eslint、prettier、stylelint、commitlint"></a>代码、项目规范，配置 eslint、prettier、stylelint、commitlint</h1><blockquote>
+<p>为了规范项目代码，统一代码风格，同时提升代码的提交规范，使用 <strong>eslint</strong> 进行代码规范化的检测和自动修改；使用  <strong>prettier</strong> 统一代码风格和自动格式化；使用  <strong>stylelint</strong> 统一 css 风格和自动格式化；使用 <strong>commitlint</strong>、<strong>lint-staged</strong>、<strong>husky</strong> 进行提交检查和提交自动格式化。 同时为了消除不同使用者 vscode 的差异，提供了 .vscode – setting.json 的配置.</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="Eslint-prettier-vscode-配置"><a href="#Eslint-prettier-vscode-配置" class="headerlink" title="Eslint\prettier\vscode 配置"></a>Eslint\prettier\vscode 配置</h2><ol>
+<li>.vscode 配置:</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;files.associations&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;*.vue&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vue&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span> <span class="comment">// prettier保存格式化</span></span><br><span class="line">  <span class="attr">&quot;[javascript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[json]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[html]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[jsonc]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[vue]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;octref.vetur&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">// vetur 配置</span></span><br><span class="line">  <span class="attr">&quot;vetur.validation.template&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.html&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettyhtml&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.css&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.postcss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.scss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.less&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.stylus&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stylus-supremacy&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.sass&quot;</span><span class="punctuation">:</span> <span class="string">&quot;sass-formatter&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.js&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier-eslint&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatter.ts&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vscode-typescript&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.options.tabSize&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;vetur.format.defaultFormatterOptions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">   <span class="comment">// &quot;js-beautify-html&quot;: &#123;</span></span><br><span class="line">   <span class="comment">//   &quot;wrap_attributes&quot;: &quot;force-expand-multiline&quot;</span></span><br><span class="line">   <span class="comment">// &#125;,</span></span><br><span class="line">    <span class="attr">&quot;prettyhtml&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;printWidth&quot;</span><span class="punctuation">:</span> <span class="number">150</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;singleQuote&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;wrapAttributes&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sortAttributes&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;prettier&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;semi&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;singleQuote&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;prettier.vueIndentScriptAndStyle&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">// eslint扩展设置</span></span><br><span class="line">  <span class="attr">&quot;editor.codeActionsOnSave&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;source.fixAll.eslint&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;eslint.options&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;extensions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;.js&quot;</span><span class="punctuation">,</span> <span class="string">&quot;.vue&quot;</span><span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;eslint.validate&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;javascript&quot;</span><span class="punctuation">,</span> <span class="string">&quot;javascriptreact&quot;</span><span class="punctuation">,</span> <span class="string">&quot;html&quot;</span><span class="punctuation">,</span> <span class="string">&quot;typescript&quot;</span><span class="punctuation">,</span> <span class="string">&quot;typescriptreact&quot;</span><span class="punctuation">,</span> <span class="string">&quot;vue&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>安装以下npm包</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev eslint@7.28.x prettier eslint-config-prettier eslint-plugin-prettier eslint-formatter-pretty</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Tips: </p>
+<p>eslant 要求版本7.28以上，eslint-config-prettier eslint-plugin-prettier用于解决prettier和eslint规则的冲突.</p>
+<p>eslint-formatter-pretty （用于命令行美化）</p>
+</blockquote>
+<ol start="3">
+<li>.eslintrc 配置如下</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  root<span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  parserOptions<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    parser<span class="punctuation">:</span> &#x27;babel-eslint&#x27;<span class="punctuation">,</span></span><br><span class="line">    sourceType<span class="punctuation">:</span> &#x27;module&#x27;<span class="punctuation">,</span></span><br><span class="line">    ecmaVersion<span class="punctuation">:</span> <span class="number">2020</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  env<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    browser<span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    node<span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    es6<span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  extends<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    &#x27;plugin<span class="punctuation">:</span>vue/recommended&#x27;<span class="punctuation">,</span></span><br><span class="line">    &#x27;eslint<span class="punctuation">:</span>recommended&#x27;<span class="punctuation">,</span></span><br><span class="line">    &#x27;plugin<span class="punctuation">:</span>prettier/recommended&#x27;<span class="punctuation">,</span> <span class="comment">// 解决prettier和eslint的冲突</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span> </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>prettier和eslint存在部分冲突的规则， 通过 eslint-config-prettier eslint-plugin-prettier 已经 能解决大部分冲突，剩下的比如  “singleQuote”、”semi” 手动配置 eslint 就能解决</p>
+<p>配置的原则就是 eslint 负责代码检查和自动修复，prettier 负责自动格式化 </p>
+</blockquote>
+<h2 id="stylelint"><a href="#stylelint" class="headerlink" title="stylelint"></a>stylelint</h2><ol>
+<li>Npm 安装如下包</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">		<span class="attr">&quot;stylelint&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^14.3.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-config-prettier&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^9.0.3&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-config-recess-order&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^3.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-config-recommended-vue&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^1.1.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-config-standard&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^24.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-config-standard-scss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^3.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-scss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^4.1.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;stylelint-webpack-plugin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^2.3.2&quot;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>新建stylelint.config.js 文件并配置如下:</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">defaultSeverity</span>: <span class="string">&#x27;warning&#x27;</span>,</span><br><span class="line">  <span class="attr">extends</span>: [<span class="string">&#x27;stylelint-config-standard-scss&#x27;</span>, <span class="string">&#x27;stylelint-config-recommended-vue/scss&#x27;</span>, <span class="string">&#x27;stylelint-config-prettier&#x27;</span>, <span class="string">&#x27;stylelint-config-recess-order&#x27;</span>],</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;selector-class-pattern&#x27;</span>: [</span><br><span class="line">      <span class="comment">// 命名规范 - kebab-case</span></span><br><span class="line">      <span class="string">&#x27;^([a-z][a-z0-9]*)(-+[a-z0-9]+)*$&#x27;</span>,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">message</span>: <span class="string">&#x27;Expected class selector to be kebab-case&#x27;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&#x27;rule-empty-line-before&#x27;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="string">&#x27;declaration-block-no-duplicate-properties&#x27;</span>: <span class="literal">true</span>, <span class="comment">// 禁止声明重复属性</span></span><br><span class="line">    <span class="string">&#x27;no-descending-specificity&#x27;</span>: <span class="literal">true</span>, <span class="comment">// 禁止在具有较高优先级的选择器后出现被其覆盖的较低优先级的选择器。</span></span><br><span class="line">    <span class="comment">// 最多允许嵌套20层，去掉默认的最多2层</span></span><br><span class="line">    <span class="string">&#x27;max-nesting-depth&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="comment">// 颜色值要小写</span></span><br><span class="line">    <span class="string">&#x27;color-hex-case&#x27;</span>: <span class="string">&#x27;lower&#x27;</span>,</span><br><span class="line">    <span class="comment">// 颜色值能短则短</span></span><br><span class="line">    <span class="string">&#x27;color-hex-length&#x27;</span>: <span class="string">&#x27;short&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">ignoreFiles</span>: [<span class="string">&#x27;**/*.js&#x27;</span>, <span class="string">&#x27;**/*.jsx&#x27;</span>, <span class="string">&#x27;**/*.tsx&#x27;</span>, <span class="string">&#x27;**/*.ts&#x27;</span>],</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>webpack StyleLintPlugin 配置如下：</li>
+</ol>
+<p>​		</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">StyleLintPlugin</span>(&#123;</span><br><span class="line">        <span class="attr">files</span>: [<span class="string">&#x27;src/*.(s(c|a)ss|css|less|vue)&#x27;</span>],</span><br><span class="line">        <span class="attr">extensions</span>: [<span class="string">&#x27;ccs&#x27;</span>, <span class="string">&#x27;scss&#x27;</span>, <span class="string">&#x27;sass&#x27;</span>, <span class="string">&#x27;less&#x27;</span>, <span class="string">&#x27;vue&#x27;</span>, <span class="string">&#x27;html&#x27;</span>],</span><br><span class="line">        <span class="attr">fix</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">cache</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">emitErrors</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">failOnError</span>: <span class="literal">false</span>,</span><br><span class="line">      &#125;),</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<ol start="4">
+<li>vscode 配置如下</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;stylelint.validate&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;vue&quot;</span><span class="punctuation">,</span> <span class="string">&quot;less&quot;</span><span class="punctuation">,</span> <span class="string">&quot;css&quot;</span><span class="punctuation">,</span> <span class="string">&quot;html&quot;</span><span class="punctuation">,</span> <span class="string">&quot;scss&quot;</span><span class="punctuation">,</span> <span class="string">&quot;sass&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.codeActionsOnSave&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;source.fixAll.stylelint&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="commitlint-husky-lint-staged"><a href="#commitlint-husky-lint-staged" class="headerlink" title="commitlint husky lint-staged"></a>commitlint husky lint-staged</h2><ol>
+<li><blockquote>
+<p>npm install –save-dev @commitlint&#x2F;config-conventional @commitlint&#x2F;cli  husky lint-staged</p>
+</blockquote>
+</li>
+<li><p>commitlint.config.js 配置如下:</p>
+</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * init: 项目初始化</span></span><br><span class="line"><span class="comment"> * feat：新功能</span></span><br><span class="line"><span class="comment"> * fix：修补某功能的bug</span></span><br><span class="line"><span class="comment"> * refactor：重构某个功能</span></span><br><span class="line"><span class="comment"> * perf: 优化构建工具或运行时性能</span></span><br><span class="line"><span class="comment"> * style：仅样式改动</span></span><br><span class="line"><span class="comment"> * docs：仅文档新增/改动</span></span><br><span class="line"><span class="comment"> * chore：构建过程或辅助工具的变动</span></span><br><span class="line"><span class="comment"> * ci: ci配置相关，docker等配置文件修改</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">extends</span>: [<span class="string">&#x27;@commitlint/config-conventional&#x27;</span>],</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;type-enum&#x27;</span>: [<span class="number">2</span>, <span class="string">&#x27;always&#x27;</span>, [<span class="string">&#x27;init&#x27;</span>, <span class="string">&#x27;feat&#x27;</span>, <span class="string">&#x27;fix&#x27;</span>, <span class="string">&#x27;refactor&#x27;</span>, <span class="string">&#x27;perf&#x27;</span>, <span class="string">&#x27;style&#x27;</span>, <span class="string">&#x27;docs&#x27;</span>, <span class="string">&#x27;chore&#x27;</span>, <span class="string">&#x27;ci&#x27;</span>]],</span><br><span class="line">    <span class="string">&#x27;type-case&#x27;</span>: [<span class="number">0</span>],</span><br><span class="line">    <span class="string">&#x27;type-empty&#x27;</span>: [<span class="number">0</span>],</span><br><span class="line">    <span class="string">&#x27;scope-empty&#x27;</span>: [<span class="number">0</span>],</span><br><span class="line">    <span class="string">&#x27;scope-case&#x27;</span>: [<span class="number">0</span>],</span><br><span class="line">    <span class="string">&#x27;subject-full-stop&#x27;</span>: [<span class="number">0</span>, <span class="string">&#x27;never&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;subject-case&#x27;</span>: [<span class="number">0</span>, <span class="string">&#x27;never&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;header-max-length&#x27;</span>: [<span class="number">0</span>, <span class="string">&#x27;always&#x27;</span>, <span class="number">72</span>],</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>husky lint-staged</li>
+</ol>
+<blockquote>
+<p>npm install husky lint-staged prettier –save-dev</p>
+<p>npx husky install  (启用)</p>
+<p>“prepare”: “husky install” 【install后自动启用，这个配置在package.json中，否则下次新拉代码还需要手动启用】</p>
+<p>npx husky add .husky&#x2F;pre-commit “npm run lint-staged” 【创建一个hook，执行完根目录回生成一个.husky目录】</p>
+</blockquote>
+<p>​	</p>
+<ol start="4">
+<li>husky 和 lint-staged 配置如下</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;husky&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;pre-commit&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm run lint-staged&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;lint-staged&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;**/*.vue&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;npm run lint:fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;npm run lint:style:fix&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;**/*.&#123;js,jsx,ts,tsx&#125;&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;npm run lint:fix&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;**/*.&#123;htm,html,css,sss,less,scss,sass&#125;&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;npm run lint:style:fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;git add&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="npm-脚本部分配置如下"><a href="#npm-脚本部分配置如下" class="headerlink" title="npm 脚本部分配置如下:"></a>npm 脚本部分配置如下:</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;lint&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eslint --ext .js,.vue src --ignore-path .gitignore .&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lint:fix&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eslint --fix --ext .js,.vue --format=pretty ./src&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lint:prettier&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prettier --check \&quot;**/*\&quot; --end-of-line auto&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lint:style&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stylelint src/**/*.&#123;vue,css,sass,scss,less&#125; --allow-empty-input&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lint:style:fix&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stylelint src/**/*.&#123;vue,css,sass,scss,less&#125; --fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;lint-staged&quot;</span><span class="punctuation">:</span> <span class="string">&quot;lint-staged&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;prepare&quot;</span><span class="punctuation">:</span> <span class="string">&quot;husky install&quot;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="用到的部分依赖及版本如下："><a href="#用到的部分依赖及版本如下：" class="headerlink" title="用到的部分依赖及版本如下："></a>用到的部分依赖及版本如下：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;devDependencies&quot;: &#123;</span><br><span class="line">		&quot;@commitlint/cli&quot;: &quot;^16.1.0&quot;,</span><br><span class="line">    &quot;@commitlint/config-conventional&quot;: &quot;^16.0.0&quot;,</span><br><span class="line">     &quot;eslint&quot;: &quot;^7.29.0&quot;,</span><br><span class="line">    &quot;eslint-config-prettier&quot;: &quot;^8.3.0&quot;,</span><br><span class="line">    &quot;eslint-formatter-pretty&quot;: &quot;^4.1.0&quot;,</span><br><span class="line">    &quot;eslint-plugin-prettier&quot;: &quot;^4.0.0&quot;,</span><br><span class="line">    &quot;eslint-plugin-vue&quot;: &quot;6.2.2&quot;,</span><br><span class="line">    &quot;husky&quot;: &quot;^7.0.4&quot;,</span><br><span class="line">    &quot;lint-staged&quot;: &quot;^12.3.2&quot;,</span><br><span class="line">    &quot;postcss&quot;: &quot;^8.4.5&quot;,</span><br><span class="line">    &quot;postcss-html&quot;: &quot;^1.3.0&quot;,</span><br><span class="line">    &quot;postcss-scss&quot;: &quot;^4.0.3&quot;,</span><br><span class="line">    &quot;prettier&quot;: &quot;2.5.1&quot;,</span><br><span class="line">    &quot;stylelint&quot;: &quot;^14.3.0&quot;,</span><br><span class="line">    &quot;stylelint-config-prettier&quot;: &quot;^9.0.3&quot;,</span><br><span class="line">    &quot;stylelint-config-recess-order&quot;: &quot;^3.0.0&quot;,</span><br><span class="line">    &quot;stylelint-config-recommended-vue&quot;: &quot;^1.1.0&quot;,</span><br><span class="line">    &quot;stylelint-config-standard&quot;: &quot;^24.0.0&quot;,</span><br><span class="line">    &quot;stylelint-config-standard-scss&quot;: &quot;^3.0.0&quot;,</span><br><span class="line">    &quot;stylelint-scss&quot;: &quot;^4.1.0&quot;,</span><br><span class="line">    &quot;stylelint-webpack-plugin&quot;: &quot;^2.3.2&quot;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+  </article>
+  <!-- tag -->
+  <div class="mt-12 pt-6 border-t border-gray-200">
+    
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/Vue/">Vue</a>
+        </span>
+      
+    
+  </div>
+  <!-- prev and next -->
+  <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+    <div>
+      
+    </div>
+    <div>
+      
+        <a href="/2021/04/30/%E4%BD%BF%E7%94%A8rollup%E6%89%93%E5%8C%85%E5%B9%B6%E5%8F%91%E5%B8%83%E4%B8%80%E4%B8%AAjs%E5%BA%93/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          使用rollup打包并发布一个js库
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
+      
+    </div>
+  </div>
+  <!-- comment -->
+  <div class="article-comments mt-12">
+    
+
+  </div>
+</section>
+<!-- js inspect -->
+
+<script src="/lib/clipboard.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const maraidConfig = {
+      theme: "default",
+      logLevel: 3,
+      flowchart: { curve: "linear" },
+      gantt: { axisFormat: "%m/%d/%Y" },
+      sequence: { actorMargin: 50 },
+    };
+    mermaid.initialize(maraidConfig);
+  });
+</script>
+
+
+
+<script src="/lib/fancybox/fancybox.umd.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    $('.post-content').each(function(i){
+      $(this).find('img').each(function(){
+        if ($(this).parent().hasClass('fancybox') || $(this).parent().is('a')) return;
+        var alt = this.alt;
+        if (alt) $(this).after('<span class="fancybox-alt">' + alt + '</span>');
+        $(this).wrap('<a class="fancybox-img" href="' + this.src + '" data-fancybox=\"gallery\" data-caption="' + alt + '"></a>')
+      });
+      $(this).find('.fancybox').each(function(){
+        $(this).attr('rel', 'article' + i);
+      });
+    });
+
+    Fancybox.bind('[data-fancybox="gallery"]', {
+        // options
+    })
+  })
+</script>
+
+<!-- tocbot begin -->
+
+<script src="/lib/tocbot/tocbot.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.post-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.post-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+    });
+  })
+</script>
+<!-- tocbot end -->
+
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "15";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>

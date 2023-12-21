@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="collieZhou">
+
+
+  <meta name="subtitle" content="run">
+
+
+
+  <meta name="keywords" content="blog">
+
+
+<title>Archiv | 深夜杂记</title>
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="深夜杂记" />
+          深夜杂记
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+          <a class="hidden sm:flex" href="/categories">Categories</a>
+        
+          <a class="hidden sm:flex" href="/tags">Tags</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/collieZ">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/categories" class="flex h-12 sm:h-auto items-center">Categories</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/tags" class="flex h-12 sm:h-auto items-center">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <section class="px-6 max-w-prose mx-auto gap-12 grid grid-cols-1">
+  <div class="flex flex-col h-48 items-center justify-center">
+    <h1 class="site-title text-4xl leading-relaxed">
+      深夜杂记
+    </h1>
+    <p class="text-gray-500 mt-2">
+      run
+    </p>
+  </div>
+  
+  
+    
+    
+      <div class="relative pointer-events-none">
+        <span class="text-9xl opacity-10 absolute -left-11 -top-6 font-bold">2020</span>
+      </div>
+    
+    <a style="--stagger:0" href="/2020/11/04/less%E7%AC%94%E8%AE%B0/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          less 使用总结
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="less-笔记📒"><a href="#less-笔记📒" class="headerlink" title="less  笔记📒"></a>less  笔记📒</h1><h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@color:</span> red;</span><br><span class="line"><span class="selector-class">.a</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@color</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Nov 04
+          ·
+          2 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:1" href="/2020/07/20/%E6%B0%B4%E6%B3%A2%E7%BA%B9%E5%8A%A8%E6%95%88/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          css3 水位图波纹动效
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="水波纹动效"><a href="#水波纹动效" class="headerlink" title="水波纹动效"></a>水波纹动效</h1><p>直接上代码</p>
+<p>通过遮罩和动画实现水位图波纹特效</p>
+<p>可以通过输入0-100的数字或者 拖动滑动条调节水位的高低 (通过修改wave-mask的top)</p>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Jul 20
+          ·
+          2 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:2" href="/2020/07/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0Vue%E6%BA%90%E7%A0%81(%E4%BA%8C)%20%E2%80%94%E2%80%94%E5%93%8D%E5%BA%94%E5%BC%8F%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          从零开始学习Vue源码 ——响应式基本原理
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="从零开始学习Vue源码-——响应式基本原理"><a href="#从零开始学习Vue源码-——响应式基本原理" class="headerlink" title="从零开始学习Vue源码 ——响应式基本原理"></a>从零开始学习Vue源码 ——响应式基本原理</h1><h4 id="这里实现一个简易版本的响应式系统来形象的理解数据是如何在初始化的时候被劫持，以及如何在修改时更新视图的。"><a href="#这里实现一个简易版本的响应式系统来形象的理解数据是如何在初始化的时候被劫持，以及如何在修改时更新视图的。" class="headerlink" title="这里实现一个简易版本的响应式系统来形象的理解数据是如何在初始化的时候被劫持，以及如何在修改时更新视图的。"></a>这里实现一个简易版本的响应式系统来形象的理解数据是如何在初始化的时候被劫持，以及如何在修改时更新视图的。</h4><h3 id="首先看下Vue2-x实现响应式系统最重要的方法"><a href="#首先看下Vue2-x实现响应式系统最重要的方法" class="headerlink" title="首先看下Vue2.x实现响应式系统最重要的方法"></a>首先看下Vue2.x实现响应式系统最重要的方法</h3><p><code>Object.defineProperty</code>, Vue2.x就是基于它实现的响应式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    obj: 目标对象</span></span><br><span class="line"><span class="comment">    prop: 需要操作的目标对象的属性名</span></span><br><span class="line"><span class="comment">    descriptor: 描述符</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">    return value 传入对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(obj, prop, descriptor)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>具体的属性以及使用方法可以参考<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">MDN</a></p>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Jul 01
+          ·
+          2 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:3" href="/2020/07/01/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0Vue%E6%BA%90%E7%A0%81(%E4%B8%80)%20%E2%80%94%E2%80%94%20%E6%A6%82%E8%A7%88/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          从零开始学习Vue源码 —— 概览
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="从零开始学习Vue源码-——-概览"><a href="#从零开始学习Vue源码-——-概览" class="headerlink" title="从零开始学习Vue源码 —— 概览"></a>从零开始学习Vue源码 —— 概览</h1><p>先上一张图</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/19/1606e7eaa2a664e8?imageslim"></p>
+<p>以上流程包括了从：</p>
+<blockquote>
+<p>初始化 —— 挂载 —— 解析模版 —— 生成渲染函数 ——   render function转换为VNode节点最终形成Virtual Dom Tree ——  virtual dom tree转化为真实Dom节点从而渲染视图</p>
+</blockquote>
+<p>响应式更新包括了:</p>
+<blockquote>
+<p>在init时进行了<code>Object.defineProperty</code> 的绑定 —— render function渲染读取值，触发getter函数 —— 进行依赖收集 —— 修改对象值触发setter函数 —— 通知**[依赖收集]**中Dep的每个 watcher 值变化了，需要更新视图 —— watcher调用 <code>update</code>来更新视图 ——  将新、旧VNode传入patch进行diff比较，只修改比较得出的差异的部分Dom</p>
+</blockquote>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Jul 01
+          ·
+          2 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:4" href="/2020/07/01/react%20%20%E7%9F%A5%E8%AF%86%E7%82%B9/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          react hooks知识点
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h2 id="react-知识点-hooks-class"><a href="#react-知识点-hooks-class" class="headerlink" title="react  知识点(hooks, class)"></a>react  知识点(hooks, class)</h2><h3 id="1-usecallback"><a href="#1-usecallback" class="headerlink" title="1. usecallback"></a>1. usecallback</h3><blockquote>
+<p>缓存函数，依赖项变化后再重新生成.</p>
+<p><a target="_blank" rel="noopener" href="https://react.docschina.org/docs/hooks-reference.html#usecallback"><code>useCallback</code></a> Hook 允许你在重新渲染之间保持对相同的回调引用以使得 <code>shouldComponentUpdate</code> 继续工作</p>
+<p>当缓存的函数依赖项频繁变动的话，可以采用useRef的形式，在 <code>xxxRef.current</code> 上把所依赖的变量写入xxxref， usecallback依赖 xxxRef， 因为xxxref只会创建一次，且xxxref.current始终是最新的，所以可以解决依赖项频繁变更的问题并且可以完成函数的缓存。</p>
+</blockquote>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Jul 01
+          ·
+          1 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:5" href="/2020/06/19/%E4%B8%8D%E4%BD%BF%E7%94%A8%20+%20%E3%80%81-%E6%B1%82%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%9A%84%E5%92%8C%20%EF%BC%88%E5%90%AB%E7%AC%A6%E5%8F%B7%EF%BC%89/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          不使用 + 、-求两个数的和 （含符号）
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+        </p>
+        <p class="line-clamp-4">
+          Jun 19
+          ·
+          1 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:6" href="/2020/06/10/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E7%82%B9%E6%A2%B3%E7%90%86%20%20%20--part%20one/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          前端知识点梳理 --part one
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="前端知识点梳理-–part-one"><a href="#前端知识点梳理-–part-one" class="headerlink" title="前端知识点梳理   –part one"></a>前端知识点梳理   –part one</h1><h2 id="基础部分"><a href="#基础部分" class="headerlink" title="基础部分"></a>基础部分</h2><h3 id="1-Html-语义化的好处"><a href="#1-Html-语义化的好处" class="headerlink" title="1.  Html 语义化的好处 ?"></a>1.  Html 语义化的好处 ?</h3><ul>
+<li>使html的结构更清晰，更直观，更易于seo</li>
+</ul>
+<h3 id="2-清除浮动的方法有哪些-？"><a href="#2-清除浮动的方法有哪些-？" class="headerlink" title="2. 清除浮动的方法有哪些 ？"></a>2. 清除浮动的方法有哪些 ？</h3><ul>
+<li>定义一个空标签再浮动元素之后。 然后给其 <code>clear: both</code> </li>
+<li>定义伪元素来清除浮动</li>
+</ul>
+<blockquote>
+<p>使用overflow:auto（空标签元素清除浮动而不得不增加无意代码的弊端,,使用zoom:1用于兼容IE）。</p>
+</blockquote>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Jun 10
+          ·
+          2 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:7" href="/2020/04/07/blob2pic/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          二进制流转图片
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <p><strong>二进制流(ArrayBuffer)转为图片</strong></p>
+<ol>
+<li><p>首先通过ajax或者ws获取到传来的二进制流数据</p>
+</li>
+<li><p>responseType 需要设置为arraybuffer。</p>
+</li>
+<li><p>然后我们拿到所需的二进制数据， 通过console打印发现是一个ArrayBuffer，接着我们对其进行如下处理，转为base64:</p>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Apr 07
+          ·
+          1 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+      <div class="relative pointer-events-none">
+        <span class="text-9xl opacity-10 absolute -left-11 -top-6 font-bold">2019</span>
+      </div>
+    
+    <a style="--stagger:8" href="/2019/03/31/Nuxt.js%20%20i18n%E5%9B%BD%E9%99%85%E5%8C%96/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          Nuxt i18n国际化
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="Nuxt-js集成国际化"><a href="#Nuxt-js集成国际化" class="headerlink" title="Nuxt.js集成国际化"></a>Nuxt.js集成国际化</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>​	公司官网需求要加上国际化， 之前官网使用的是vue的 nuxt框架，然后generate生成的静态页面，看了一下，nuxt官方有集成i18n的示例就跟着弄了一下，期间也踩了一些坑。</p>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Mar 31
+          ·
+          4 min
+        </p>
+      </section>
+    </a>
+  
+    
+    
+    <a style="--stagger:9" href="/2019/03/21/css%E5%A4%9A%E8%A1%8C%E6%96%87%E6%9C%AC%E7%9C%81%E7%95%A5%E5%8F%B7/" data-animate>
+      <header>
+        <h2 class="font-bold text-xl">
+          css多行文本省略号
+        </h2>
+      </header>
+      <section class="text-gray-400 my-2 text-sm time">
+        <p class="line-clamp-4">
+          
+            <div class="py-2">
+              <h1 id="CSS多行文本设置省略号"><a href="#CSS多行文本设置省略号" class="headerlink" title="CSS多行文本设置省略号"></a>CSS多行文本设置省略号</h1><h2 id="单行文本省略号"><a href="#单行文本省略号" class="headerlink" title="单行文本省略号"></a>单行文本省略号</h2><p>  如果要设置单行文本超出容器末尾显示省略号是非常简单的，通过:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">overflow</span>: hidden;</span><br><span class="line"><span class="attribute">text-overflow</span>: ellipsis;</span><br></pre></td></tr></table></figure>
+
+<p>即可实现单行文本的省略号。</p>
+<h2 id="多行文本的省略号"><a href="#多行文本的省略号" class="headerlink" title="多行文本的省略号"></a>多行文本的省略号</h2><p>​	下面就是本文主要讨论的点了，如何实现多行文本超出区域显示省略号，或者说可以设置最多显示几行。</p>
+            </div>
+          
+        </p>
+        <p class="line-clamp-4">
+          Mar 21
+          ·
+          1 min
+        </p>
+      </section>
+    </a>
+  
+</section>
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "15";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>

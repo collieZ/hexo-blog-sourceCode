@@ -1,7 +1,6 @@
 ---
-title: 
-date: 2019-02-16 10:28:11
-type: "categories"
-comments: false
+title: 'Categories'
+date: "2023-12-23 14:00:01"
+layout: category
 ---
 

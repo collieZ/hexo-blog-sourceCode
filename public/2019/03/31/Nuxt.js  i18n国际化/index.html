@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="collieZhou">
+
+
+  <meta name="subtitle" content="run">
+
+
+
+  <meta name="keywords" content="blog">
+
+
+<title>Nuxt i18n国际化 | 深夜杂记</title>
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="深夜杂记" />
+          深夜杂记
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        Nuxt i18n国际化
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+          <a class="hidden sm:flex" href="/categories">Categories</a>
+        
+          <a class="hidden sm:flex" href="/tags">Tags</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/collieZ">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/categories" class="flex h-12 sm:h-auto items-center">Categories</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/tags" class="flex h-12 sm:h-auto items-center">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <!-- css -->
+
+<link rel="stylesheet" href="/lib/fancybox/fancybox.min.css">
+
+
+<link rel="stylesheet" href="/lib/tocbot/tocbot.min.css">
+
+<!-- toc -->
+
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
+<section class="px-6 max-w-prose mx-auto md:px-0">
+  <!-- header -->
+  <header class="overflow-hidden pt-6 pb-6 md:pt-12">
+    <div class="pt-4 md:pt-6">
+      <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
+        Nuxt i18n国际化
+      </h1>
+      <div>
+        <section class="flex items-center gap-3 text-sm">
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
+            <time>2019-03-31</time>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
+            <span>4 min</span>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
+            <span>887 words</span>
+          </span>
+          
+            <span class="text-gray-400">·</span>
+            <span class="flex items-center gap-1">
+              <iconify-icon width="16" icon="icon-park-outline:box" class="mr-2"></iconify-icon>
+              <a class="article-category-link" href="/categories/javascript/">javascript</a>
+            </span>
+          
+        </section>
+      </div>
+    </div>
+  </header>
+  <!-- content -->
+  <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
+    <h1 id="Nuxt-js集成国际化"><a href="#Nuxt-js集成国际化" class="headerlink" title="Nuxt.js集成国际化"></a>Nuxt.js集成国际化</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>​	公司官网需求要加上国际化， 之前官网使用的是vue的 nuxt框架，然后generate生成的静态页面，看了一下，nuxt官方有集成i18n的示例就跟着弄了一下，期间也踩了一些坑。</p>
+<span id="more"></span>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>​	<code>npm install vue-i18n --save</code></p>
+<h3 id="在nuxt-config-js-中配置"><a href="#在nuxt-config-js-中配置" class="headerlink" title="在nuxt.config.js 中配置"></a>在nuxt.config.js 中配置</h3><p>​	</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">plugins</span>: [<span class="string">&#x27;~/plugins/i18n.js&#x27;</span>],</span><br><span class="line"></span><br><span class="line"><span class="attr">router</span>: &#123;</span><br><span class="line">  <span class="attr">middleware</span>: [<span class="string">&#x27;i18n&#x27;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="在plugins文件夹下新建i18n-js"><a href="#在plugins文件夹下新建i18n-js" class="headerlink" title="在plugins文件夹下新建i18n.js"></a>在plugins文件夹下新建i18n.js</h3><p>​	</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Vue</span> <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">VueI18</span>n <span class="keyword">from</span> <span class="string">&#x27;vue-i18n&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">use</span>(<span class="title class_">VueI18</span>n)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (&#123; app, store &#125;) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Set i18n instance on app</span></span><br><span class="line">  <span class="comment">// This way we can use it in middleware and pages asyncData/fetch</span></span><br><span class="line">  app.<span class="property">i18n</span> = <span class="keyword">new</span> <span class="title class_">VueI18</span>n(&#123;</span><br><span class="line">    <span class="attr">locale</span>: store.<span class="property">state</span>.<span class="property">locale</span>,</span><br><span class="line">    <span class="attr">fallbackLocale</span>: <span class="string">&#x27;cn&#x27;</span>,</span><br><span class="line">    <span class="attr">messages</span>: &#123;</span><br><span class="line">      <span class="attr">en</span>: <span class="built_in">require</span>(<span class="string">&#x27;~/locales/en.json&#x27;</span>),</span><br><span class="line">      <span class="attr">cn</span>: <span class="built_in">require</span>(<span class="string">&#x27;~/locales/cn.json&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  app.<span class="property">i18n</span>.<span class="property">path</span> = <span class="function"><span class="params">link</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (app.<span class="property">i18n</span>.<span class="property">locale</span> === app.<span class="property">i18n</span>.<span class="property">fallbackLocale</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">`/<span class="subst">$&#123;link&#125;</span>`</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">`/<span class="subst">$&#123;app.i18n.locale&#125;</span>/<span class="subst">$&#123;link&#125;</span>`</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="在middleware文件夹下新建-i18n-js"><a href="#在middleware文件夹下新建-i18n-js" class="headerlink" title="在middleware文件夹下新建 i18n.js"></a>在middleware文件夹下新建 i18n.js</h3><p>​	 </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> (<span class="params">&#123; isHMR, app, store, route, params, error, redirect &#125;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> defaultLocale = app.<span class="property">i18n</span>.<span class="property">fallbackLocale</span></span><br><span class="line">  <span class="comment">// If middleware is called from hot module replacement, ignore it</span></span><br><span class="line">  <span class="keyword">if</span> (isHMR) <span class="keyword">return</span></span><br><span class="line">  <span class="comment">// Get locale from params</span></span><br><span class="line">  <span class="comment">// const locale = params.lang || defaultLocale</span></span><br><span class="line">  <span class="keyword">const</span> locale = params.<span class="property">lang</span> || defaultLocale</span><br><span class="line">  <span class="keyword">if</span> (store.<span class="property">state</span>.<span class="property">locales</span>.<span class="title function_">indexOf</span>(locale) === -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">error</span>(&#123; <span class="attr">message</span>: <span class="string">&#x27;This page could not be found.&#x27;</span>, <span class="attr">statusCode</span>: <span class="number">404</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Set locale</span></span><br><span class="line">  store.<span class="title function_">commit</span>(<span class="string">&#x27;SET_LANG&#x27;</span>, locale)</span><br><span class="line">  app.<span class="property">i18n</span>.<span class="property">locale</span> = store.<span class="property">state</span>.<span class="property">locale</span></span><br><span class="line">  <span class="comment">// If route is /&lt;defaultLocale&gt;/... -&gt; redirect to /...</span></span><br><span class="line">  <span class="keyword">if</span> (locale === defaultLocale &amp;&amp; route.<span class="property">fullPath</span>.<span class="title function_">indexOf</span>(<span class="string">&#x27;/&#x27;</span> + defaultLocale) === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> toReplace = <span class="string">&#x27;^/&#x27;</span> + defaultLocale + (route.<span class="property">fullPath</span>.<span class="title function_">indexOf</span>(<span class="string">&#x27;/&#x27;</span> + defaultLocale + <span class="string">&#x27;/&#x27;</span>) === <span class="number">0</span> ? <span class="string">&#x27;/&#x27;</span> : <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> re = <span class="keyword">new</span> <span class="title class_">RegExp</span>(toReplace)</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">redirect</span>(</span><br><span class="line">      route.<span class="property">fullPath</span>.<span class="title function_">replace</span>(re, <span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建本地语言库"><a href="#创建本地语言库" class="headerlink" title="创建本地语言库"></a>创建本地语言库</h2><p>​	在根目录下新建文件夹locales， 然后在文件夹下添加你要翻译的语言的json文件 。</p>
+<h3 id="在store文件夹下新建index-js"><a href="#在store文件夹下新建index-js" class="headerlink" title="在store文件夹下新建index.js"></a>在store文件夹下新建index.js</h3><p>​	</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">state</span> = (<span class="params"></span>) =&gt; (&#123;</span><br><span class="line">  <span class="attr">locales</span>: [<span class="string">&#x27;en&#x27;</span>, <span class="string">&#x27;cn&#x27;</span>],</span><br><span class="line">  <span class="attr">locale</span>: <span class="string">&#x27;cn&#x27;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> mutations = &#123;</span><br><span class="line">  <span class="title function_">SET_LANG</span>(<span class="params">state, locale</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (state.<span class="property">locales</span>.<span class="title function_">indexOf</span>(locale) !== -<span class="number">1</span>) &#123;</span><br><span class="line">      state.<span class="property">locale</span> = locale</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="踩坑……"><a href="#踩坑……" class="headerlink" title="踩坑……"></a>踩坑……</h3><p>​	好了，照着官方把该加的都加了，这下就能实现国际化的切换了吧。 然后参考了几篇文章， 通过 <code><strong>this</strong>.$i18n.locale = Langname</code> 或是</p>
+<p> <code>this.$store.commit('SET_LANG', lang)</code> 切换语言。 结果要不就是404， 要不就是一个页面切换了，然后换个页面，也就是切换了路由又变回原来的语言了。。。   </p>
+<p>​	结果找了好久发现是路由的问题，主要是middleware中的这一段代码:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> locale = params.<span class="property">lang</span> || defaultLocale</span><br><span class="line">  <span class="keyword">if</span> (store.<span class="property">state</span>.<span class="property">locales</span>.<span class="title function_">indexOf</span>(locale) === -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">error</span>(&#123; <span class="attr">message</span>: <span class="string">&#x27;This page could not be found.&#x27;</span>, <span class="attr">statusCode</span>: <span class="number">404</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Set locale</span></span><br><span class="line">  store.<span class="title function_">commit</span>(<span class="string">&#x27;SET_LANG&#x27;</span>, locale)</span><br><span class="line">  app.<span class="property">i18n</span>.<span class="property">locale</span> = store.<span class="property">state</span>.<span class="property">locale</span></span><br></pre></td></tr></table></figure>
+
+<p>每次我们切换页面的时候都会调用这个中间件，然后会去判断路由中的params 如果lang参数有值就将语言设置为对应的值。</p>
+<p>​	 比如我的地址是  “<a target="_blank" rel="noopener" href="http://localhost/zn/">http://localhost/zn/</a>“ 那么中间件就会将当前的lang设置为zn  如果就是”<a target="_blank" rel="noopener" href="http://localhost/">http://localhost/</a>“ 就会设置为默认的值.</p>
+<p>​	所以之前我们手动设置了store中的值，切换了路由就会变回原样是因为每次中间件都会把locale设置成默认值(因为我们路由中没有带参数)。</p>
+<p>​	可是当我们路由带上参数后切出现找不到页面的情况，这是因为当前路径下，比如 “<a target="_blank" rel="noopener" href="http://localhost/zn/">http://localhost/zn/</a>“ 找不到我们的页面。 这是我们就要用到nuxt提供给我们的一个 <strong>动态路由</strong>的功能。 </p>
+<p>​	<a target="_blank" rel="noopener" href="https://zh.nuxtjs.org/guide/routing#%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1">动态路由</a>根据官方可如下配置，因为nuxt是根据page下目录生成路由，可如下组织目录:</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1g1mdn9yi7fj30e40n6jsd.jpg" alt="A8CB811A-9DC9-4BB8-8C19-9EFB4ADDA033"></p>
+<p>_lang 就是动态路由下的参数项，这样不管是带不带参数都能找到页面了。</p>
+
+  </article>
+  <!-- tag -->
+  <div class="mt-12 pt-6 border-t border-gray-200">
+    
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/i18n/">i18n</a>
+        </span>
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/nuxt/">nuxt</a>
+        </span>
+      
+    
+  </div>
+  <!-- prev and next -->
+  <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+    <div>
+      
+        <a href="/2020/04/07/blob2pic/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
+          二进制流转图片
+        </a>
+      
+    </div>
+    <div>
+      
+        <a href="/2019/03/21/css%E5%A4%9A%E8%A1%8C%E6%96%87%E6%9C%AC%E7%9C%81%E7%95%A5%E5%8F%B7/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          css多行文本省略号
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
+      
+    </div>
+  </div>
+  <!-- comment -->
+  <div class="article-comments mt-12">
+    
+
+  </div>
+</section>
+<!-- js inspect -->
+
+<script src="/lib/clipboard.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const maraidConfig = {
+      theme: "default",
+      logLevel: 3,
+      flowchart: { curve: "linear" },
+      gantt: { axisFormat: "%m/%d/%Y" },
+      sequence: { actorMargin: 50 },
+    };
+    mermaid.initialize(maraidConfig);
+  });
+</script>
+
+
+
+<script src="/lib/fancybox/fancybox.umd.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    $('.post-content').each(function(i){
+      $(this).find('img').each(function(){
+        if ($(this).parent().hasClass('fancybox') || $(this).parent().is('a')) return;
+        var alt = this.alt;
+        if (alt) $(this).after('<span class="fancybox-alt">' + alt + '</span>');
+        $(this).wrap('<a class="fancybox-img" href="' + this.src + '" data-fancybox=\"gallery\" data-caption="' + alt + '"></a>')
+      });
+      $(this).find('.fancybox').each(function(){
+        $(this).attr('rel', 'article' + i);
+      });
+    });
+
+    Fancybox.bind('[data-fancybox="gallery"]', {
+        // options
+    })
+  })
+</script>
+
+<!-- tocbot begin -->
+
+<script src="/lib/tocbot/tocbot.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.post-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.post-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+    });
+  })
+</script>
+<!-- tocbot end -->
+
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "15";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>
